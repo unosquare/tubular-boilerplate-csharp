@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ng="http://angularjs.org/" lang="en" ng-app="app">
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title ng-controller="TitleCtrl as title" ng-bind="title.content">Loading . . .</title>
+
+    <!-- Favicons -->
+    <!--<link rel="apple-touch-icon-precomposed" href="/ui/media/favicon.png" />-->
+    <link rel="icon" href="/ui/assets/favicon.ico" />
+
+    <!-- CSS (from CDN) -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.4/lumen/bootstrap.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/toastr/2.0.1/toastr.css" />
+
+    <link rel="stylesheet" href="/Scripts/tubular/tubular-bundle.css" />
+    <link rel="stylesheet" href="/ui/styles/common.css" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- JS (from CDN) -->
+    <script src="//cdn.jsdelivr.net/g/jquery,bootstrap,angularjs(angular.min.js+angular-animate.min.js+angular-cookies.min.js+angular-route.min.js),angular.bootstrap(ui-bootstrap.min.js+ui-bootstrap-tpls.min.js),blob.js(Blob.js),filesaver.js,toastr"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.1.5/angular-local-storage.min.js"></script>
+
+    <!-- Angular Application files -->
+    <script src="/Scripts/tubular/tubular-bundle.js"></script>
+    <script src="/Scripts/app/app.js"></script>
+</head>
+
+<body ng-cloak>
+    <div class="container">
+        <div class="row" ng-controller="TitleCtrl as title">
+            <div class="col-md-8">
+                <div class="pull-left hidden-sm hidden-xs" style="display: table-cell; vertical-align: middle;">
+                    <img src="http://placehold.it/350x150" alt="logo" />
+                </div>
+                <div class="pull-left" style="display: table-cell; padding-left: 16px;"
+                     ng-hide="title.key == 'Login' || title.key =='Loading . . .'">
+                    <h2>
+                        {{title.pageTitle}} <br /><small ng-show="subheader">{{subheader}}</small>
+                    </h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="pull-right hidden-print" style="display: table-cell; margin-top: 20px; margin-left: 4px;"
+                     ng-hide="title.key == 'Login' || title.key =='Loading . . .'">
+                    <div class="row text-right" style="margin-right: 8px; margin-bottom: 4px;">
+                        <a ng-click="printDoc()" ng-show="validPrint" style="cursor: pointer;">
+                            <span class="fa fa-print"></span>&nbsp;Print
+                        </a>
+                        <span ng-show="validPrint">&nbsp; | &nbsp;</span>
+                        <a href="/Notifications">Notifications</a>
+                        <span class="badge hidden-xs" onclick="document.location = '/Notifications'" style="cursor: pointer;">
+                            <i class="fa fa-bell"></i>&nbsp;{{notifications.Total}}
+                        </span>
+                        &nbsp; | &nbsp;
+                        <div class="btn-group">
+                            <a href="javascript:void(0)"
+                               data-toggle="dropdown" aria-expanded="false">
+                                Admin&nbsp;<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="/Lookups">Lookups</a></li>
+                                <li><a href="/Admins">Admin Users</a></li>
+                                <li><a href="/SoftwareVersion">Software Version</a></li>
+                                <li><a href="/Logs">Log Viewer</a></li>
+                            </ul>
+                        </div>
+                        &nbsp; | &nbsp;
+                        <a href="javascript:void(0)" ng-click="logout()">Log out</a>
+                        <br />
+                    </div>
+                    <div class="row">
+                        <div class="input-group hidden-sm hidden-xs col-xs-6 pull-right" style="margin-right: 10px">
+                            <span class="input-group-addon input-sm">
+                                <i class="fa fa-search"></i>
+                            </span>
+                            <input type="search" class="form-control input-sm" placeholder="search . . ."
+                                   maxlength="20" ng-model="search"
+                                   ng-model-options="{ debounce: 1500 }">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-blue hidden-print">
+                <a href="#menu-toggle" id="menu-toggle">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div id="wrapper">
+                <div id="sidebar-wrapper" ng-controller="NavCtrl" ng-show="showMenu" class="hidden-print">
+                    <br />
+                    <nav role="navigation" class="navbar navbar-default navbar-bigfont" style="border-width: 0">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li ng-repeat="item in menu" ng-class="{active: hightlight == item.title}">
+                                <a href="{{item.path}}">
+                                    <span class="fa {{item.icon}}"></span>&nbsp;
+                                    {{item.title}}
+                                </a>
+                            </li>
+                        </ul>
+                        <br />
+
+                        <div class="hidden-xs hidden-sm text-center">
+                            <hr />
+                            <br />
+                            <small>
+                                Powered by
+                                <a href="https://github.com/unosquare/tubular" target="_blank">Tubular</a>
+                                <br />
+                                Unosquare &copy; 2015
+                            </small>
+                        </div>
+                    </nav>
+                </div>
+
+                <div id="page-content-wrapper">
+                    <div class="container-fluid">
+                        <ng-view></ng-view>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+</body>
+</html>
