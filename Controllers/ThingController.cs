@@ -10,7 +10,7 @@ using Unosquare.Tubular.ObjectModel;
 
 namespace TubularBaseProject.Controllers
 {
-    [RoutePrefix("api/thing")]
+    [Authorize, RoutePrefix("api/thing")]
     public class ThingController : ApiController
     {
         private readonly ThingRepository _repository = new ThingRepository();
