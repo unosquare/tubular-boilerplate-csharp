@@ -1010,6 +1010,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                             return model;
                                         });
 
+                                        $scope.$emit('tbGrid_OnDataLoaded', $scope);
+
                                         $scope.aggregationFunctions = data.AggregationPayload;
                                         $scope.currentPage = data.CurrentPage;
                                         $scope.totalPages = data.TotalPages;
@@ -1307,7 +1309,9 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     restrict: 'E',
                     replace: true,
                     transclude: true,
-                    scope: true,
+                    scope: {
+                        visible: '='
+                    },
                     controller: [
                         '$scope', function($scope) {
                             $scope.column = { Label: '' };
@@ -1317,6 +1321,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             $scope.sortColumn = function(multiple) {
                                 $scope.$component.sortColumn($scope.column.Name, multiple);
                             };
+
+                            $scope.$watch("visible", function (val) {
+                                if (angular.isDefined(val)) {
+                                    $scope.column.Visible = val;
+                                }
+                            });
                         }
                     ],
                     compile: function compile() {
@@ -1374,11 +1384,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $(icon).removeClass(tubularConst.downCssClass);
 
                                     var cssClass = "";
-                                    if (scope.$parent.column.SortDirection === 'Ascending')
-                                        cssClass = tubularConst.upCssClass;
 
-                                    if (scope.$parent.column.SortDirection === 'Descending')
+                                    if (scope.$parent.column.SortDirection === 'Ascending') {
+                                        cssClass = tubularConst.upCssClass;
+                                    }
+
+                                    if (scope.$parent.column.SortDirection === 'Descending') {
                                         cssClass = tubularConst.downCssClass;
+                                    }
 
                                     $(icon).addClass(cssClass);
                                 };
@@ -1387,12 +1400,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     refreshIcon($('i.sort-icon.fa', lElement.parent()));
                                 });
 
-                                $timeout(function() {
+                                var timer = $timeout(function() {
                                     $(lElement).after('&nbsp;<i class="sort-icon fa"></i>');
 
                                     var icon = $('i.sort-icon.fa', lElement.parent());
                                     refreshIcon(icon);
                                 }, 0);
+
+                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             },
                             post: function(scope, lElement) {
                                 scope.label = scope.$parent.label;
@@ -1704,10 +1719,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         '<span ng-hide="isEditing">{{value | numberorcurrency: format }}</span>' +
                         '<label ng-show="showLabel">{{ label }}</label>' +
                         '<div class="input-group" ng-show="isEditing">' +
-                        '<div class="input-group-addon" ng-show="format == \'C\'">$</div>' +
+                        '<div class="input-group-addon">{{format == \'C\' ? \'$\' : \'.\'}}</div>' +
                         '<input type="number" placeholder="{{placeholder}}" ng-model="value" class="form-control" ' +
                         'ng-required="required" ng-hide="readOnly" step="{{step || \'any\'}}" />' +
-                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{format == \'C\' ? (value | number: 2) : value}}</p>' +
+                        '<p class="form-control form-control-static text-right" ng-show="readOnly">{{value | number: 2}}</p>' +
                         '</div>' +
                         '<span class="help-block error-block" ng-show="isEditing" ng-repeat="error in state.$errors">{{error}}</span>' +
                         '<span class="help-block" ng-show="isEditing && help">{{help}}</span>' +
@@ -2300,7 +2315,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                 restrict: 'E',
                 replace: true,
                 transclude: true,
-                controller: function ($scope, $modal) {
+                controller: ['$scope', '$modal', function ($scope, $modal) {
                     $scope.$component = $scope.$parent;
 
                     $scope.openColumnsSelector = function () {
@@ -2336,8 +2351,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             ]
                         });
                     };
-
-                }
+                }]
             };
         }])
         /**
@@ -2448,7 +2462,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 tubularGridFilterService.applyFilterFuncs(scope, lElement, lAttrs, function() {
                                     var inp = $(lElement).find("input[type=date]")[0];
 
-                                    if (inp.type != 'date') {
+                                    if (inp.type !== 'date') {
                                         $(inp).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {
@@ -2458,7 +2472,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                                     var inpLev = $(lElement).find("input[type=date]")[1];
 
-                                    if (inpLev.type != 'date') {
+                                    if (inpLev.type !== 'date') {
                                         $(inpLev).datepicker({
                                             dateFormat: scope.format.toLowerCase()
                                         }).on("dateChange", function(e) {
@@ -2566,7 +2580,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          *
          * @description
          * The `tbForm` directive is the base to create any form. You can define a `dataService` and a
-         * `modelKey` to autoload a record. The `serverSaveUrl` can be used to create a new or update
+         * `modelKey` to auto-load a record. The `serverSaveUrl` can be used to create a new or update
          * an existing record.
          * 
          * @scope
@@ -2601,7 +2615,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     },
                     controller: [
                         '$scope', '$routeParams', 'tubularModel', 'tubularHttp', '$timeout', '$element',
-                        function ($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
+                        function($scope, $routeParams, TubularModel, tubularHttp, $timeout, $element) {
                             $scope.tubularDirective = 'tubular-form';
                             $scope.serverSaveMethod = $scope.serverSaveMethod || 'POST';
                             $scope.fields = [];
@@ -2623,7 +2637,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
-                            $scope.retrieveData = function () {
+                            $scope.retrieveData = function() {
                                 // Try to load a key from markup or route
                                 $scope.modelKey = $scope.modelKey || $routeParams.param;
 
@@ -2632,15 +2646,15 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                         $scope.modelKey != null &&
                                         $scope.modelKey !== '') {
                                         $scope.dataService.getByKey($scope.serverUrl, $scope.modelKey).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 $scope.model = new TubularModel($scope, data, $scope.dataService);
                                                 $scope.bindFields();
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     } else {
                                         $scope.dataService.get(tubularHttp.addTimeZoneToUrl($scope.serverUrl)).promise.then(
-                                            function (data) {
+                                            function(data) {
                                                 var innerScope = $scope;
                                                 var dataService = $scope.dataService;
 
@@ -2652,7 +2666,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                                 $scope.model = new TubularModel(innerScope, data, dataService);
                                                 $scope.bindFields();
                                                 $scope.model.$isNew = true;
-                                            }, function (error) {
+                                            }, function(error) {
                                                 $scope.$emit('tbForm_OnConnectionError', error);
                                             });
                                     }
@@ -2697,7 +2711,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.save();
                             };
 
-                            $scope.create = function () {
+                            $scope.create = function() {
                                 if (!$scope.model.$valid()) {
                                     return;
                                 }
@@ -2710,8 +2724,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 $scope.$emit('tbForm_OnCancel', $scope.model);
                             };
 
-                            $scope.clear = function () {
-                                angular.forEach($scope.fields, function (field) {
+                            $scope.clear = function() {
+                                angular.forEach($scope.fields, function(field) {
                                     if (field.resetEditor) {
                                         field.resetEditor();
                                     } else {
@@ -2720,8 +2734,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 });
                             };
 
-                            $scope.finishDefinition = function () {
-                                $timeout(function () {
+                            $scope.finishDefinition = function() {
+                                var timer = $timeout(function() {
                                     $scope.hasFieldsDefinitions = true;
 
                                     if ($element.find('input').length) {
@@ -2730,6 +2744,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 }, 0);
 
                                 $scope.$emit('tbForm_OnGreetParentController', $scope);
+                                $scope.$on('$destroy', function() { $timeout.cancel(timer); });
                             };
                         }
                     ],
@@ -2792,9 +2807,10 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         $scope.lastSearch = $scope.$component.search.Text;
 
                         $scope.$watch("$component.search.Text", function(val, prev) {
-                            if (angular.isUndefined(val)) return;
-                            if (val === prev) return;
-
+                            if (angular.isUndefined(val) || val === prev) {
+                                return;
+                            }
+                            
                             if ($scope.lastSearch !== "" && val === "") {
                                 $scope.$component.saveSearch();
                                 $scope.$component.search.Operator = 'None';
@@ -2802,8 +2818,13 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                 return;
                             }
 
-                            if (val === "" || val.length < $scope.minChars) return;
-                            if (val === $scope.lastSearch) return;
+                            if (val === "" || val.length < $scope.minChars) {
+                                return;
+                            }
+
+                            if (val === $scope.lastSearch) {
+                                return;
+                            }
 
                             $scope.lastSearch = val;
                             $scope.$component.saveSearch();
@@ -3229,14 +3250,14 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     ],
                     compile: function compile() {
                         return {
-                            post: function (scope, lElement, lAttrs, lController, lTransclude) {
+                            post: function (scope, lElement, lAttrs) {
                                 scope.firstButtonClass = lAttrs.firstButtonClass || 'fa fa-fast-backward';
                                 scope.prevButtonClass = lAttrs.prevButtonClass || 'fa fa-backward';
 
                                 scope.nextButtonClass = lAttrs.nextButtonClass || 'fa fa-forward';
                                 scope.lastButtonClass = lAttrs.lastButtonClass || 'fa fa-fast-forward';
 
-                                $timeout(function () {
+                                var timer = $timeout(function () {
                                     var allLinks = lElement.find('li a');
 
                                     $(allLinks[0]).html('<i class="' + scope.firstButtonClass + '"></i>');
@@ -3246,6 +3267,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                                     $(allLinks[allLinks.length - 1]).html('<i class="' + scope.lastButtonClass + '"></i>');
                                 }, 0);
 
+                                scope.$on('$destroy', function () { $timeout.cancel(timer); });
                             }
                         };
                     }
@@ -3337,7 +3359,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
         * 
         * This model doesn't need to be created in your controller, the `tbGrid` generate it from any `tbColumn`.
         */
-        .factory('tubularGridColumnModel', function($filter) {
+        .factory('tubularGridColumnModel', ["$filter", function($filter) {
 
             var parseSortDirection = function(value) {
                 if (angular.isUndefined(value)) {
@@ -3418,7 +3440,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
                 };
             };
-        })
+        }])
         /**
         * @ngdoc factory
         * @name tubulargGridFilterModel
@@ -3901,12 +3923,18 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
 
                     if (scope.dataType === 'datetime' || scope.dataType === 'date') {
                         scope.filter.Argument = [new Date()];
-                        scope.filter.Operator = 'Equals';
+
+                        if (scope.filter.Operator === 'Contains') {
+                            scope.filter.Operator = 'Equals';
+                        }
                     }
 
                     if (scope.dataType === 'numeric' || scope.dataType === 'boolean') {
                         scope.filter.Argument = [1];
-                        scope.filter.Operator = 'Equals';
+
+                        if (scope.filter.Operator === 'Contains') {
+                            scope.filter.Operator = 'Equals';
+                        }
                     }
 
                     scope.filterTitle = lAttrs.title || $filter('translate')('CAPTION_FILTER');
@@ -4560,7 +4588,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * JSON database.
          */
         .service('tubularLocalData', [
-            'tubularHttp', '$q', '$filter', function tubularOData(tubularHttp, $q, $filter) {
+            'tubularHttp', '$q', '$filter', function tubularLocalData(tubularHttp, $q, $filter) {
                 var me = this;
 
                 me.retrieveDataAsync = function(request) {
@@ -4582,7 +4610,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                var reduceFilterArray = function (filters) {
+                var reduceFilterArray = function(filters) {
                     var filtersPattern = {};
 
                     for (var i in filters) {
@@ -4713,12 +4741,12 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * Use `tubularOData` to connect a grid or a form to an OData Resource. Most filters are working
          * and sorting and pagination too.
          * 
-         * This service provides authentication using bearer-tokens.
+         * This service provides authentication using bearer-tokens, if you require any other you need to provide it.
          */
         .service('tubularOData', [
             'tubularHttp', function tubularOData(tubularHttp) {
                 var me = this;
-                
+
                 // {0} represents column name and {1} represents filter value
                 me.operatorsMapping = {
                     'None': '',
@@ -4734,16 +4762,17 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     'Gte': "{0} ge {1}",
                     'Gt': "{0} gt {1}",
                     'Lte': "{0} le {1}",
-                    'Lt': "{0} lt {1}",
+                    'Lt': "{0} lt {1}"
                 };
 
-                me.retrieveDataAsync = function(request) {
+                me.generateUrl = function (request) {
                     var params = request.data;
+
                     var url = request.serverUrl;
                     url += url.indexOf('?') > 0 ? '&' : '?';
                     url += '$format=json&$inlinecount=allpages';
 
-                    url += "&$select=" + params.Columns.map(function(el) { return el.Name; }).join(',');
+                    url += "&$select=" + params.Columns.map(function (el) { return el.Name; }).join(',');
 
                     if (params.Take != -1) {
                         url += "&$skip=" + params.Skip;
@@ -4751,43 +4780,52 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     }
 
                     var order = params.Columns
-                        .filter(function(el) { return el.SortOrder > 0; })
-                        .sort(function(a, b) { return a.SortOrder - b.SortOrder; })
-                        .map(function(el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
+                        .filter(function (el) { return el.SortOrder > 0; })
+                        .sort(function (a, b) { return a.SortOrder - b.SortOrder; })
+                        .map(function (el) { return el.Name + " " + (el.SortDirection == "Descending" ? "desc" : ""); });
 
-                    if (order.length > 0)
+                    if (order.length > 0) {
                         url += "&$orderby=" + order.join(',');
+                    }
 
                     var filter = params.Columns
-                        .filter(function(el) { return el.Filter && el.Filter.Text; })
-                        .map(function(el) {
+                        .filter(function (el) { return el.Filter && el.Filter.Text; })
+                        .map(function (el) {
                             return me.operatorsMapping[el.Filter.Operator]
                                 .replace('{0}', el.Name)
                                 .replace('{1}', el.DataType == "string" ? "'" + el.Filter.Text + "'" : el.Filter.Text);
                         })
-                        .filter(function(el) { return el.length > 1; });
+                        .filter(function (el) { return el.length > 1; });
 
 
                     if (params.Search && params.Search.Operator === 'Auto') {
                         var freetext = params.Columns
-                            .filter(function(el) { return el.Searchable; })
-                            .map(function(el) {
+                            .filter(function (el) { return el.Searchable; })
+                            .map(function (el) {
                                 return "startswith({0}, '{1}') eq true".replace('{0}', el.Name).replace('{1}', params.Search.Text);
                             });
 
-                        if (freetext.length > 0)
+                        if (freetext.length > 0) {
                             filter.push("(" + freetext.join(' or ') + ")");
+                        }
                     }
 
-                    if (filter.length > 0)
+                    if (filter.length > 0) {
                         url += "&$filter=" + filter.join(' and ');
+                    }
 
+                    return url;
+                };
+
+                me.retrieveDataAsync = function (request) {
+                    var params = request.data;
+                    var originalUrl = request.serverUrl;
+                    request.serverUrl = me.generateUrl(request);
                     request.data = null;
-                    request.serverUrl = url;
 
                     var response = tubularHttp.retrieveDataAsync(request);
 
-                    var promise = response.promise.then(function(data) {
+                    var promise = response.promise.then(function (data) {
                         var result = {
                             Payload: data.value,
                             CurrentPage: 1,
@@ -4796,10 +4834,22 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                             FilteredRecordCount: 1
                         };
 
-                        result.TotalRecordCount = data["odata.count"];
+                        result.TotalRecordCount = parseInt(data["odata.count"]);
                         result.FilteredRecordCount = result.TotalRecordCount; // TODO: Calculate filtered items
-                        result.TotalPages = parseInt(result.TotalRecordCount / params.Take);
+                        result.TotalPages = parseInt((result.FilteredRecordCount + params.Take - 1) / params.Take);
                         result.CurrentPage = parseInt(1 + ((params.Skip / result.FilteredRecordCount) * result.TotalPages));
+
+                        if (result.CurrentPage > result.TotalPages) {
+                            result.CurrentPage = 1;
+                            request.data = params;
+                            request.data.Skip = 0;
+
+                            request.serverUrl = originalUrl;
+
+                            me.retrieveDataAsync(request).promise.then(function (newData) {
+                                result.Payload = newData.value;
+                            });
+                        }
 
                         return result;
                     });
@@ -4810,27 +4860,27 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                     };
                 };
 
-                me.saveDataAsync = function(model, request) {
+                me.saveDataAsync = function (model, request) {
                     return tubularHttp.saveDataAsync(model, request); //TODO: Check how to handle
                 };
 
-                me.get = function(url) {
+                me.get = function (url) {
                     return tubularHttp.get(url);
                 };
 
-                me.delete = function(url) {
+                me.delete = function (url) {
                     return tubularHttp.delete(url);
                 };
 
-                me.post = function(url, data) {
+                me.post = function (url, data) {
                     return tubularHttp.post(url, data);
                 };
 
-                me.put = function(url, data) {
+                me.put = function (url, data) {
                     return tubularHttp.put(url, data);
                 };
 
-                me.getByKey = function(url, key) {
+                me.getByKey = function (url, key) {
                     return tubularHttp.get(url + "(" + key + ")");
                 };
             }
@@ -4918,6 +4968,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'CAPTION_EDIT': 'Edit',
                         'CAPTION_SAVE': 'Save',
                         'CAPTION_PRINT': 'Print',
+                        'CAPTION_LOAD': 'Load',
+                        'CAPTION_ADD': 'Add',
                         'UI_SEARCH': 'search . . .',
                         'UI_PAGESIZE': 'Page size:',
                         'UI_EXPORTCSV': 'Export CSV',
@@ -4927,6 +4979,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_SHOWINGRECORDS': 'Showing {0} to {1} of {2} records',
                         'UI_FILTEREDRECORDS': '(Filtered from {0} total records)',
                         'UI_HTTPERROR': 'Unable to contact server; please, try again later.',
+                        'UI_GENERATEREPORT': 'Generate Report',
                         'OP_NONE': 'None',
                         'OP_EQUALS': 'Equals',
                         'OP_NOTEQUALS': 'Not Equals',
@@ -4958,6 +5011,8 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'CAPTION_EDIT': 'Editar',
                         'CAPTION_SAVE': 'Guardar',
                         'CAPTION_PRINT': 'Imprimir',
+                        'CAPTION_LOAD': 'Cargar',
+                        'CAPTION_ADD': 'Agregar',
                         'UI_SEARCH': 'buscar . . .',
                         'UI_PAGESIZE': '# Registros:',
                         'UI_EXPORTCSV': 'Exportar CSV',
@@ -4967,6 +5022,7 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
                         'UI_SHOWINGRECORDS': 'Mostrando registros {0} al {1} de {2}',
                         'UI_FILTEREDRECORDS': '(De un total de {0} registros)',
                         'UI_HTTPERROR': 'No se logro contactar el servidor, intente más tarde.',
+                        'UI_GENERATEREPORT': 'Generar Reporte',
                         'OP_NONE': 'Ninguno',
                         'OP_EQUALS': 'Igual',
                         'OP_NOTEQUALS': 'No Igual',
@@ -5012,23 +5068,25 @@ angular.module('a8m.group-by', ['a8m.filter-watcher'])
          * @description
          * Translate a key to the current language
          */
-        .filter('translate', function (tubularTranslate) {
-            return function (input, param1, param2, param3, param4) {
-                // Probably send an optional param to define language
-                if (angular.isDefined(input)) {
-                    var translation = tubularTranslate.translate(input);
+        .filter('translate', [
+            'tubularTranslate', function(tubularTranslate) {
+                return function(input, param1, param2, param3, param4) {
+                    // TODO: Probably send an optional param to define language
+                    if (angular.isDefined(input)) {
+                        var translation = tubularTranslate.translate(input);
 
-                    translation = translation.replace("{0}", param1 || '');
-                    translation = translation.replace("{1}", param2 || '');
-                    translation = translation.replace("{2}", param3 || '');
-                    translation = translation.replace("{3}", param4 || '');
+                        translation = translation.replace("{0}", param1 || '');
+                        translation = translation.replace("{1}", param2 || '');
+                        translation = translation.replace("{2}", param3 || '');
+                        translation = translation.replace("{3}", param4 || '');
 
-                    return translation;
-                }
+                        return translation;
+                    }
 
-                return input;
-            };
-        });
+                    return input;
+                };
+            }
+        ]);
 })();
 /**
  * Usage example
