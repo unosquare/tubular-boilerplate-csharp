@@ -1,2 +1,6 @@
 language: csharp
 solution: TubularBoilerplate.sln
+install:
+  - nuget restore TubularBoilerplate.sln
+script:
+  - xbuild /p:Configuration=Release TubularBoilerplate.sln
