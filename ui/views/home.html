@@ -1,7 +1,7 @@
 ﻿<div ng-controller="GenericCtrl">
     <tb-grid server-url="/api/thing/paged" page-size="20" server-save-url="/api/thing"
              grid-name="things"
-             server-save-method="PUT">
+             server-save-method="POST">
         <div class="row">
             <tb-grid-pager class="col-md-6"></tb-grid-pager>
             <div class="col-md-3">
@@ -39,6 +39,11 @@
                                 <tb-column-filter></tb-column-filter>
                                 <tb-column-header>{{label}}</tb-column-header>
                             </tb-column>
+                            <tb-column name="Date" column-type="datetime" sortable="true"
+                                       sort-direction="" sort-order="0" visible="true">
+                                <tb-column-date-time-filter></tb-column-date-time-filter>
+                                <tb-column-header>{{label}}</tb-column-header>
+                            </tb-column>
                         </tb-column-definitions>
                         <tb-row-set>
                             <tb-row-template ng-show="$parent.$component.isEmpty">
@@ -50,7 +55,7 @@
                                 <tb-cell-template column-name="Id" class="text-center cell-menu">
                                     <div class="btn-group">
                                         <a class="btn btn-default btn-xs"
-                                           href="#">
+                                           ng-click="row.editPopup('/ui/popups/editThing.html', 'lg')">
                                             {{row.Id}}
                                         </a>
                                         <tb-remove-button model="row"
@@ -63,6 +68,9 @@
                                 </tb-cell-template>
                                 <tb-cell-template column-name="Amount">
                                     {{row.Amount | number: 2}}
+                                </tb-cell-template>
+                                <tb-cell-template column-name="Date">
+                                    {{row}}
                                 </tb-cell-template>
                             </tb-row-template>
                         </tb-row-set>

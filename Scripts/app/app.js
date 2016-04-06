@@ -16,6 +16,12 @@
                     templateUrl: '/ui/views/home.html',
                     title: 'Home',
                     print: true
+                }).when('/Something', {
+                    templateUrl: '/ui/views/something.html',
+                    title: 'Something'
+                }).when('/Link', {
+                    templateUrl: '/ui/views/link.html',
+                    title: 'Link'
                 }).when('/Login', {
                     templateUrl: '/ui/views/login.html',
                     title: 'Login'
