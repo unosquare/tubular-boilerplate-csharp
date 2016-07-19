@@ -1,10 +1,11 @@
-﻿(function() {
+﻿(function(angular) {
     'use strict';
 
     angular.module('app', [
         'ngRoute',
         'tubular',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'toastr'
     ]).config([
         '$httpProvider', function($httpProvider) {
             $httpProvider.interceptors.push('noCacheInterceptor');
@@ -42,7 +43,7 @@
             }
         };
     }).service('alerts', [
-        '$filter', function alerts($filter) {
+        '$filter', 'toastr', function alerts($filter, toastr) {
             var me = this;
 
             me.previousError = '';
@@ -76,7 +77,7 @@
             me.pageTitle = "Loading . . .";
             me.key = "Loading . . .";
 
-            $scope.$on('$routeChangeSuccess', function () {
+            $scope.$on('$routeChangeSuccess', function() {
                 $scope.subheader = null;
 
                 me.key = $route.current.title;
@@ -90,11 +91,11 @@
             });
         }
     ]).controller('NavCtrl', [
-        '$scope', '$route', function ($scope, $route) {
+        '$scope', '$route', function($scope, $route) {
             $scope.hightlight = "";
             $scope.showMenu = false;
 
-            $scope.$on('$routeChangeSuccess', function () {
+            $scope.$on('$routeChangeSuccess', function() {
                 $scope.hightlight = $route.current.title;
 
                 $scope.showMenu = $route.current.title !== 'Login';
@@ -107,30 +108,25 @@
             ];
         }
     ]).controller('LoginCtrl', [
-        '$scope', '$location', 'tubularHttp', function ($scope, $location, tubularHttp) {
+        '$scope', '$location', 'tubularHttp', 'toastr', function($scope, $location, tubularHttp, toastr) {
             $scope.loading = false;
 
-            $scope.submitForm = function (valid) {
+            $scope.submitForm = function(valid) {
                 if (valid == false) {
                     toastr.error("Please complete form");
                 }
 
                 $scope.loading = true;
 
-                tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function (error) {
+                tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function(error) {
                     $scope.loading = false;
                     toastr.error(error);
                 }, true);
             };
 
-            $scope.redirectHome = function () {
+            $scope.redirectHome = function() {
                 $location.path("/");
-                $("#wrapper").removeClass('toggled');
-                $("#menu-toggle").show();
             };
-
-            $("#wrapper").addClass('toggled');
-            $("#menu-toggle").hide();
         }
     ]);
-})();
+})(window.angular);

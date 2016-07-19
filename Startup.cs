@@ -1,29 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 
-[assembly: OwinStartup(typeof(TubularBaseProject.WebApiApplication))]
+[assembly: OwinStartup(typeof(TubularBaseProject.Startup))]
 
 namespace TubularBaseProject
 {
-    public class WebApiApplication : System.Web.HttpApplication
+    public class Startup
     {
-        public static string PublicClientId { get; private set; }
-
         public void Configuration(IAppBuilder app)
         {
-            // Configure the application for OAuth based flow
-            PublicClientId = "self";
             var oAuthOptions = new OAuthAuthorizationServerOptions
             {
                 TokenEndpointPath = new PathString("/api/token"),
-                Provider = new ApplicationOAuthProvider(PublicClientId),
+                Provider = new ApplicationOAuthProvider("self"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
                 AllowInsecureHttp = true,
                 AuthenticationMode = Microsoft.Owin.Security.AuthenticationMode.Active,
