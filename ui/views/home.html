@@ -1,14 +1,13 @@
-﻿<div ng-controller="GenericCtrl">
+﻿<div>
     <tb-grid server-url="/api/thing/paged" page-size="20" server-save-url="/api/thing"
              grid-name="things"
              server-save-method="POST">
-
         <div class="col-md-12">
             <div class="row">
                 <tb-grid-pager class="col-md-6"></tb-grid-pager>
                 <div class="col-md-3">
                     <div class="btn-group btn-group-sm">
-                        <button class="btn btn-success" ng-click="$parent.newRow('/ui/popups/newThing.html', true)">
+                        <button class="btn btn-success" ng-click="$parent.$ctrl.newRow('/ui/popups/newThing.html', true)">
                             <i class="fa fa-plus-square"></i>&nbsp;Add
                         </button>
                         <tb-print-button title="Things" class="btn-group">
@@ -71,7 +70,7 @@
                                         {{row.Amount | number: 2}}
                                     </tb-cell-template>
                                     <tb-cell-template column-name="Date">
-                                        {{row}}
+                                        {{row.Date}}
                                     </tb-cell-template>
                                 </tb-row-template>
                             </tb-row-set>
@@ -86,5 +85,5 @@
                 <tb-grid-pager-info class="col-md-3 col-xs-6"></tb-grid-pager-info>
             </div>
         </div>
-</tb-grid>
+    </tb-grid>
 </div>
