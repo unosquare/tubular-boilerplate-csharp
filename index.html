@@ -56,8 +56,8 @@
                             <span class="fa fa-print"></span>&nbsp;Print
                         </a>
                         <span ng-show="validPrint">&nbsp; | &nbsp;</span>
-                        <a href="/Notifications">Notifications</a>
-                        <span class="badge hidden-xs" onclick="document.location = '/Notifications'" style="cursor: pointer;">
+                        <a href="#">Notifications</a>
+                        <span class="badge hidden-xs" style="cursor: pointer;">
                             <i class="fa fa-bell"></i>&nbsp;{{notifications.Total}}
                         </span>
                         &nbsp; | &nbsp;
@@ -92,7 +92,7 @@
         </div>
         <div class="row">
             <div class="col-md-12 col-blue hidden-print">
-                <a href="#menu-toggle" id="menu-toggle" ng-init="toggleClass = false" ng-click="toggleClass = !toggleClass">
+                <a href="#" id="menu-toggle" ng-init="toggleClass = false" ng-click="toggleClass = !toggleClass">
                     <i class="fa fa-bars"></i>
                 </a>
             </div>
