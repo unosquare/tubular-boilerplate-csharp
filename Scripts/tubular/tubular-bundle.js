@@ -3324,9 +3324,17 @@ try {
                                     obj[col.Name] = moment(obj[col.Name]);
                                 }
                             } else {
-                                var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
-                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                var tempDate = new Date(Date.parse(obj[col.Name] + timezone));
+                                var tempDate;
+
+                                // It is possible that the date we are dealing with is in UTC format
+                                if (obj[col.Name].indexOf('Z') > 0) {
+                                    tempDate = new Date(Date.parse(obj[col.Name]));
+                                }
+                                else {
+                                    var timezone = new Date(Date.parse(obj[col.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                    timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                    tempDate = new Date(Date.parse(obj[col.Name] + timezone));
+                                }
 
                                 if (col.DataType === "date") {
                                     obj[col.Name] = new Date(1900 + tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
@@ -3775,9 +3783,14 @@ try {
                                     if (angular.isDefined(parent.model[scope.Name])) {
                                         if (ctrl.DataType === 'date' && parent.model[scope.Name] != null) {
                                             // TODO: Include MomentJS
-                                            var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
-                                            timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
-                                            ctrl.value = new Date(Date.parse(parent.model[scope.Name] + timezone));
+                                            if (parent.model[scope.Name].indexOf('Z') > 0) {
+                                                ctrl.value = new Date(Date.parse(parent.model[scope.Name]));
+                                            }
+                                            else {
+                                                var timezone = new Date(Date.parse(parent.model[scope.Name])).toString().match(/([-\+][0-9]+)\s/)[1];
+                                                timezone = timezone.substr(0, timezone.length - 2) + ':' + timezone.substr(timezone.length - 2, 2);
+                                                ctrl.value = new Date(Date.parse(parent.model[scope.Name] + timezone));
+                                            }
                                         } else {
                                             ctrl.value = parent.model[scope.Name];
                                         }

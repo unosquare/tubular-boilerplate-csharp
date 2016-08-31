@@ -110,7 +110,7 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="Unosquare.Tubular, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Tubular.ServerSide.1.0.0\lib\net45\Unosquare.Tubular.dll</HintPath>
+      <HintPath>packages\Tubular.ServerSide.1.0.1\lib\net461\Unosquare.Tubular.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -132,8 +132,13 @@
     <Content Include="Scripts\tubular\tubular-bundle.js" />
     <Content Include="Scripts\tubular\tubular-bundle.min.css" />
     <Content Include="Scripts\tubular\tubular-bundle.min.js" />
+    <Content Include="Scripts\tubular\tubular-localdata-bundle.js" />
+    <Content Include="Scripts\tubular\tubular-localdata-bundle.min.js" />
+    <Content Include="Scripts\tubular\tubular-odata-bundle.js" />
+    <Content Include="Scripts\tubular\tubular-odata-bundle.min.js" />
     <Content Include="Scripts\tubular\tubular-widget-bundle.js" />
     <Content Include="Scripts\tubular\tubular-widget-bundle.min.js" />
+    <Content Include="ui\media\tubular.png" />
     <Content Include="ui\popups\editThing.html" />
     <Content Include="ui\popups\newThing.html" />
     <Content Include="ui\styles\common.css" />

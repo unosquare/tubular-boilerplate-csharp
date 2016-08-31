@@ -35,6 +35,7 @@ namespace TubularBaseProject.Controllers
 
             item.Name = model.New.Name;
             item.Amount = model.New.Amount;
+            item.Date = model.New.Date;
 
             return Ok();
         }
