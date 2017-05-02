@@ -72,8 +72,8 @@
       <HintPath>packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -84,8 +84,8 @@
       <HintPath>packages\System.Linq.Dynamic.Library.1.1.14\lib\net40\System.Linq.Dynamic.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Linq.Dynamic.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\System.Linq.Dynamic.Core.1.0.5.1\lib\net461\System.Linq.Dynamic.Core.dll</HintPath>
+    <Reference Include="System.Linq.Dynamic.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0f07ec44de6ac832, processorArchitecture=MSIL">
+      <HintPath>packages\System.Linq.Dynamic.Core.1.0.6.13\lib\net45\System.Linq.Dynamic.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
@@ -109,8 +109,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="Unosquare.Tubular, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Tubular.ServerSide.1.0.1\lib\net461\Unosquare.Tubular.dll</HintPath>
+    <Reference Include="Unosquare.Tubular, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Tubular.ServerSide.1.4.0\lib\net452\Unosquare.Tubular.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -132,12 +132,10 @@
     <Content Include="Scripts\tubular\tubular-bundle.js" />
     <Content Include="Scripts\tubular\tubular-bundle.min.css" />
     <Content Include="Scripts\tubular\tubular-bundle.min.js" />
-    <Content Include="Scripts\tubular\tubular-localdata-bundle.js" />
-    <Content Include="Scripts\tubular\tubular-localdata-bundle.min.js" />
-    <Content Include="Scripts\tubular\tubular-odata-bundle.js" />
-    <Content Include="Scripts\tubular\tubular-odata-bundle.min.js" />
-    <Content Include="Scripts\tubular\tubular-widget-bundle.js" />
-    <Content Include="Scripts\tubular\tubular-widget-bundle.min.js" />
+    <Content Include="Scripts\tubular\tubular-chartjs-bundle.js" />
+    <Content Include="Scripts\tubular\tubular-chartjs-bundle.min.js" />
+    <Content Include="Scripts\tubular\tubular-highcharts-bundle.js" />
+    <Content Include="Scripts\tubular\tubular-highcharts-bundle.min.js" />
     <Content Include="ui\media\tubular.png" />
     <Content Include="ui\popups\editThing.html" />
     <Content Include="ui\popups\newThing.html" />

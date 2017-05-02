@@ -7,10 +7,6 @@
         'ui.bootstrap',
         'toastr'
     ]).config([
-        '$httpProvider', function($httpProvider) {
-            $httpProvider.interceptors.push('noCacheInterceptor');
-        }
-    ]).config([
         '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
             $routeProvider.
                 when('/', {
@@ -32,18 +28,8 @@
 
             $locationProvider.html5Mode(true);
         }
-    ]).factory('noCacheInterceptor', function() {
-        return {
-            request: function(config) {
-                if (config.method == 'GET' && config.url.indexOf('.htm') === -1 && config.url.indexOf('blob:') === -1) {
-                    var separator = config.url.indexOf('?') === -1 ? '?' : '&';
-                    config.url = config.url + separator + 'noCache=' + new Date().getTime();
-                }
-                return config;
-            }
-        };
-    }).service('alerts', [
-        '$filter', 'toastr', function alerts($filter, toastr) {
+    ]).service('alerts', [
+        '$filter', 'toastr', function($filter, toastr) {
             var me = this;
 
             me.previousError = '';
@@ -57,7 +43,7 @@
                 me.previousError = errorMessage;
 
                 // Ignores Unauthorized error because it's redirecting to login
-                if (errorMessage != "Unauthorized") {
+                if (errorMessage != 'Unauthorized') {
                     toastr.error(errorMessage);
                 }
             };
@@ -73,26 +59,26 @@
         '$scope', '$route', '$location', 'tubularHttp', '$routeParams',
         function($scope, $route, $location, tubularHttp, $routeParams) {
             var me = this;
-            me.content = "Sample";
-            me.pageTitle = "Loading . . .";
-            me.key = "Loading . . .";
+            me.content = 'Sample';
+            me.pageTitle = 'Loading . . .';
+            me.key = 'Loading . . .';
 
             $scope.$on('$routeChangeSuccess', function() {
                 $scope.subheader = null;
 
                 me.key = $route.current.title;
                 me.pageTitle = me.key;
-                if ($routeParams.param) me.pageTitle += " - " + $routeParams.param;
-                me.content = me.pageTitle + " - Sample";
+                if ($routeParams.param) me.pageTitle += ' - ' + $routeParams.param;
+                me.content = me.pageTitle + ' - Sample';
 
-                if ($route.current.title != 'Login' && tubularHttp.isAuthenticated() == false) {
-                    $location.path("/Login");
+                if ($route.current.title != 'Login' && tubularHttp.isAuthenticated() === false) {
+                    $location.path('/Login');
                 }
             });
         }
     ]).controller('NavCtrl', [
         '$scope', '$route', function($scope, $route) {
-            $scope.hightlight = "";
+            $scope.hightlight = '';
             $scope.showMenu = false;
 
             $scope.$on('$routeChangeSuccess', function() {
@@ -113,19 +99,19 @@
 
             $scope.submitForm = function(valid) {
                 if (valid == false) {
-                    toastr.error("Please complete form");
+                    toastr.error('Please complete form');
                 }
 
                 $scope.loading = true;
 
-                tubularHttp.authenticate($scope.username, $scope.password, $scope.redirectHome, function(error) {
+                tubularHttp.authenticate($scope.username, $scope.password).then($scope.redirectHome, function(error) {
                     $scope.loading = false;
                     toastr.error(error);
-                }, true);
+                });
             };
 
             $scope.redirectHome = function() {
-                $location.path("/");
+                $location.path('/');
             };
         }
     ]);
