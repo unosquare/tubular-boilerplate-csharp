@@ -24,6 +24,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -128,14 +129,6 @@
   <ItemGroup>
     <Content Include="index.html" />
     <Content Include="Scripts\app\app.js" />
-    <Content Include="Scripts\tubular\tubular-bundle.css" />
-    <Content Include="Scripts\tubular\tubular-bundle.js" />
-    <Content Include="Scripts\tubular\tubular-bundle.min.css" />
-    <Content Include="Scripts\tubular\tubular-bundle.min.js" />
-    <Content Include="Scripts\tubular\tubular-chartjs-bundle.js" />
-    <Content Include="Scripts\tubular\tubular-chartjs-bundle.min.js" />
-    <Content Include="Scripts\tubular\tubular-highcharts-bundle.js" />
-    <Content Include="Scripts\tubular\tubular-highcharts-bundle.min.js" />
     <Content Include="ui\media\tubular.png" />
     <Content Include="ui\popups\editThing.html" />
     <Content Include="ui\popups\newThing.html" />
