@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/unosquare/tubular-boilerplate-csharp.svg?branch=UpdateDependencies)](https://travis-ci.org/unosquare/tubular-boilerplate-csharp)
+
 ![Tubular](http://unosquare.github.io/tubular/assets/tubular.png)
 
 *:star:Please star this project if you find it useful!*
