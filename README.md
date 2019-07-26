@@ -2,6 +2,8 @@
 
 ![Tubular](http://unosquare.github.io/tubular/assets/tubular.png)
 
+**Important** - This repository has been archived. We are not longer maintaining this project. Please check Tubular for [Angular.io](https://github.com/unosquare/tubular2) or [React](https://github.com/unosquare/tubular-react).
+
 *:star:Please star this project if you find it useful!*
 
 # Tubular Boilerplate CSharp
