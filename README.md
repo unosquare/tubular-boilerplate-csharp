@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/unosquare/tubular-boilerplate-csharp.svg?branch=UpdateDependencies)](https://travis-ci.org/unosquare/tubular-boilerplate-csharp)
 
-![Tubular](http://unosquare.github.io/tubular/assets/tubular.png)
+![Tubular](http://unosquare.github.io/tubular-angular/assets/tubular.png)
 
 **Important** - This repository has been archived. We are not longer maintaining this project. Please check Tubular for [Angular.io](https://github.com/unosquare/tubular2) or [React](https://github.com/unosquare/tubular-react).
 
